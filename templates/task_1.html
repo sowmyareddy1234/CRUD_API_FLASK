@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 20px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        form, input, label, button {
+            margin: 10px;
+        }
+
+        input, button {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result, #readResult {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 style="color: #2c3e50;">CRUD Operations</h1>
+
+<!-- Create Form -->
+<form id="createForm">
+    <label for="name">Name:</label>
+    <input type="text" id="createName" required>
+    <label for="description">Description:</label>
+    <input type="text" id="createDescription" required>
+    <button type="button" onclick="createItem()">Create</button>
+</form>
+
+<!-- Read Section -->
+<h2 style="color: #2c3e50;">Read</h2>
+<button onclick="getAllItems()">Get All Items</button>
+
+<p>Get Item by ID:</p>
+<input type="number" id="readItemId" placeholder="Item ID">
+<button onclick="getSingleItem()">Get Item</button>
+<div id="readResult"></div>
+
+<!-- Update Form -->
+<h2 style="color: #2c3e50;">Update</h2>
+<p>Update Item by ID:</p>
+<input type="number" id="updateItemId" placeholder="Item ID">
+<label for="updateName">Name:</label>
+<input type="text" id="updateName">
+<label for="updateDescription">Description:</label>
+<input type="text" id="updateDescription">
+<button onclick="updateItem()">Update</button>
+
+<!-- Delete Form -->
+<h2 style="color: #2c3e50;">Delete</h2>
+<p>Delete Item by ID:</p>
+<input type="number" id="deleteItemId" placeholder="Item ID">
+<button onclick="deleteItem()">Delete</button>
+
+<!-- Display Result -->
+<div id="result"></div>
+
+<script>
+    function createItem() {
+        const name = document.getElementById('createName').value;
+        const description = document.getElementById('createDescription').value;
+
+        fetch('/items', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, description }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').innerText = data.message;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function getAllItems() {
+        fetch('/items')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('readResult').innerText = JSON.stringify(data, null, 2);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function getSingleItem() {
+        const itemId = document.getElementById('readItemId').value;
+
+        fetch(`/items/${itemId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('readResult').innerText = JSON.stringify(data, null, 2);
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function updateItem() {
+        const itemId = document.getElementById('updateItemId').value;
+        const name = document.getElementById('updateName').value;
+        const description = document.getElementById('updateDescription').value;
+
+        fetch(`/items/${itemId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, description }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').innerText = data.message;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function deleteItem() {
+        const itemId = document.getElementById('deleteItemId').value;
+
+        fetch(`/items/${itemId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').innerText = data.message;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+
+</body>
+</html>
